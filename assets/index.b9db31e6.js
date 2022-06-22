@@ -91,6 +91,7 @@ const p$5 = function polyfill() {
   }
 };
 p$5();
+var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
 function getAugmentedNamespace(n2) {
   if (n2.__esModule)
     return n2;
@@ -8303,7 +8304,7 @@ var Global = /* @__PURE__ */ withEmotionCache(function(props, cache) {
   var serialized = serializeStyles([styles2], void 0, react.exports.useContext(ThemeContext));
   var sheetRef = react.exports.useRef();
   useInsertionEffect(function() {
-    var key = cache.key + "-globalThis";
+    var key = cache.key + "-global";
     var sheet = new cache.sheet.constructor({
       key,
       nonce: cache.sheet.nonce,
@@ -9629,7 +9630,7 @@ var e = react.exports, t = require$$1, r = require$$2, n = reactDom.exports, o =
 function a(e2) {
   return e2 && typeof e2 == "object" && "default" in e2 ? e2 : { default: e2 };
 }
-var u = a(e), l = a(r), c = a(o), i = typeof globalThis != "undefined" ? globalThis : typeof window != "undefined" ? window : typeof globalThis != "undefined" ? globalThis : typeof self != "undefined" ? self : {};
+var u = a(e), l = a(r), c = a(o), i = typeof globalThis != "undefined" ? globalThis : typeof window != "undefined" ? window : typeof commonjsGlobal != "undefined" ? commonjsGlobal : typeof self != "undefined" ? self : {};
 function s(e2, t2) {
   return e2(t2 = { exports: {} }, t2.exports), t2.exports;
 }
@@ -10586,7 +10587,7 @@ Toolbar.Item = function ToolbarItem(props) {
     })]
   }));
 };
-var freeGlobal$1 = typeof globalThis == "object" && globalThis && globalThis.Object === Object && globalThis;
+var freeGlobal$1 = typeof commonjsGlobal == "object" && commonjsGlobal && commonjsGlobal.Object === Object && commonjsGlobal;
 var _freeGlobal = freeGlobal$1;
 var freeGlobal = _freeGlobal;
 var freeSelf = typeof self == "object" && self && self.Object === Object && self;
