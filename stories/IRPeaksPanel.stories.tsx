@@ -1,12 +1,16 @@
 import { Meta } from '@storybook/react';
-import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useQuery } from 'react-query';
 
 import { IRPeaksPanel as IRPeaksPanelComponent } from '../src';
-import { IRPeak } from '../src/components/context/data/DataState';
+import { DataState } from '../src/components/context/data/DataState';
+
+import { QueryDecorator } from './utils';
 
 export default {
   title: 'Layout/Panels/IRPeaksPanel',
   component: IRPeaksPanelComponent,
+  decorators: [QueryDecorator],
 } as Meta;
 
 export function IRPeaksPanel() {
@@ -14,32 +18,13 @@ export function IRPeaksPanel() {
 }
 
 function IRPeaksPanelStory() {
-  const [{ loaded, peaks }, setData] = useState<{
-    peaks: IRPeak[];
-    loaded: boolean;
-  }>({ peaks: [], loaded: false });
+  const { isLoading, data } = useQuery(['repoData'], () =>
+    axios.get<DataState>('../measurements.json').then(({ data }) => data),
+  );
 
-  useEffect(() => {
-    fetch('/measurements.json')
-      .then((response) => {
-        response
-          .json()
-          .then(
-            ({
-              measurements: {
-                ir: { entries },
-              },
-            }) => {
-              setData({ peaks: entries[0].peaks, loaded: true });
-            },
-          )
-          .catch((e) => {
-            throw Error(e);
-          });
-      })
-      .catch((e) => {
-        throw Error(e);
-      });
-  }, []);
-  return loaded ? <IRPeaksPanelComponent peaks={peaks} /> : null;
+  return isLoading || !data || !data.measurements.ir.entries[0].peaks ? (
+    <div>Loading...</div>
+  ) : (
+    <IRPeaksPanelComponent peaks={data.measurements.ir.entries[0].peaks} />
+  );
 }

@@ -1,16 +1,19 @@
 import { Meta } from '@storybook/react';
-import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useQuery } from 'react-query';
 
 import {
   MeasurementsPanel as MeasurementsPanelComponent,
   MeasurementsPanelProps,
 } from '../src';
 import { DataState } from '../src/components/context/data/DataState';
-import { getEmptyDataState } from '../src/components/context/data/getEmptyDataState';
+
+import { QueryDecorator } from './utils';
 
 export default {
   title: 'Layout/Panels/MeasurementsPanel',
   component: MeasurementsPanelComponent,
+  decorators: [QueryDecorator],
   argTypes: {
     onTabSelect: {
       action: 'Tab changed',
@@ -29,28 +32,13 @@ export function MeasurementsPanel(props: MeasurementsPanelProps) {
 }
 
 function MeasurementsPanelStory(props: MeasurementsPanelProps) {
-  const [{ loaded, dataState }, setData] = useState<{
-    dataState: DataState;
-    loaded: boolean;
-  }>({ dataState: getEmptyDataState(), loaded: false });
+  const { isLoading, data } = useQuery(['repoData'], () =>
+    axios.get<DataState>('../measurements.json').then(({ data }) => data),
+  );
 
-  useEffect(() => {
-    fetch('/measurements.json')
-      .then((response) => {
-        response
-          .json()
-          .then((dataState) => {
-            setData({ dataState, loaded: true });
-          })
-          .catch((e) => {
-            throw Error(e);
-          });
-      })
-      .catch((e) => {
-        throw Error(e);
-      });
-  }, []);
-  return loaded ? (
-    <MeasurementsPanelComponent {...dataState} {...props} />
-  ) : null;
+  return isLoading || !data ? (
+    <div>Loading...</div>
+  ) : (
+    <MeasurementsPanelComponent {...data} {...props} />
+  );
 }

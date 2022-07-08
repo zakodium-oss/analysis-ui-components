@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import {
   FaMeteor,
   FaBook,
@@ -6,6 +6,7 @@ import {
   FaTabletAlt,
   FaGlasses,
 } from 'react-icons/fa';
+import { useQuery } from 'react-query';
 
 import {
   Accordion,
@@ -18,30 +19,12 @@ import {
   Toolbar,
 } from '..';
 import { DataState } from '../components/context/data/DataState';
-import { getEmptyDataState } from '../components/context/data/getEmptyDataState';
 
 export default function App() {
-  const [{ loaded, dataState }, setData] = useState<{
-    dataState: DataState;
-    loaded: boolean;
-  }>({ dataState: getEmptyDataState(), loaded: false });
+  const { isLoading, data } = useQuery(['repoData'], () =>
+    axios.get<DataState>('../../measurements.json').then(({ data }) => data),
+  );
 
-  useEffect(() => {
-    fetch('/measurements.json')
-      .then((response) => {
-        response
-          .json()
-          .then((dataState) => {
-            setData({ dataState, loaded: true });
-          })
-          .catch((e) => {
-            throw Error(e);
-          });
-      })
-      .catch((e) => {
-        throw Error(e);
-      });
-  }, []);
   const items: Array<TabItem> = [
     {
       id: '1h',
@@ -130,7 +113,11 @@ export default function App() {
                         width: '100%',
                       }}
                     >
-                      {loaded && <MeasurementsPanel {...dataState} />}
+                      {isLoading || !data ? (
+                        'Loading...'
+                      ) : (
+                        <MeasurementsPanel {...data} />
+                      )}
                     </div>
                   </Accordion.Item>
                   <Accordion.Item title="Integral">
