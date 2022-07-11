@@ -56,9 +56,14 @@ function rowChildren(children: ReactNode) {
         child.type === ValueRenderers.Text ||
         child.type === ValueRenderers.Number ||
         child.type === ValueRenderers.Title ||
-        child.type === ValueRenderers.Object)
+        child.type === ValueRenderers.Object ||
+        child.type === ValueRenderers.Header)
     ) {
-      cells.push(<td css={styles.border}>{child}</td>);
+      if (child.type === ValueRenderers.Header) {
+        cells.push(<th css={styles.border}>{child}</th>);
+      } else {
+        cells.push(<td css={styles.border}>{child}</td>);
+      }
     } else {
       // eslint-disable-next-line no-console
       console.error('Invalid Row child: ', child);
