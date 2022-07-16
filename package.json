@@ -73,6 +73,7 @@
     "cheminfo-font": "^1.8.1",
     "cross-env": "^7.0.3",
     "eslint": "^8.18.0",
+    "ml-signal-processing": "^0.5.2",
     "ml-spectra-processing": "^11.7.0",
     "prettier": "^2.7.1",
     "react": "^17.0.2",
